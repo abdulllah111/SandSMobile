@@ -21,7 +21,7 @@ class MainStudent extends StatefulWidget {
 
 
 class _MainStudentState extends State<MainStudent> {
-  int selectBtn = 1;
+  int selectBtn = 0;
   late List<TTable> ponedelnik;
   late List<TTable> vtornik;
   late List<TTable> sreda;
@@ -29,7 +29,6 @@ class _MainStudentState extends State<MainStudent> {
   late List<TTable> piatnica;
   late List<TTable> subbota;
   List<TTable> selectedTtable = [];
-  late TtableDataSource _ttableDataSource;
   final gr.Group? group;
   _MainStudentState(this.group);
 
@@ -53,13 +52,14 @@ class _MainStudentState extends State<MainStudent> {
       tchetverg = tTableFromJson(responce4.body);
       piatnica = tTableFromJson(responce5.body);
       subbota = tTableFromJson(responce6.body);
+      selectedTtable = ponedelnik;
     });
   }
   void initState() {
     super.initState();
-    getGroupsData();
-    selectedTtable;
     ponedelnik = [];
+    selectedTtable = [];
+    getGroupsData();
   }
   // ttable/getforgroup/{id}/{weekday}
   @override
@@ -70,50 +70,53 @@ class _MainStudentState extends State<MainStudent> {
         title: Text("Расписание для группы ${group?.groupName}"),
       ),
       body: Container(
-        child:
-          ponedelnik.length==0 ? Center(
-            child: CircularProgressIndicator(
+        child: Center (
+          child: selectedTtable.isEmpty ? CircularProgressIndicator(
 
-            ),
-          ) :
-          SfDataGrid(
-            columnWidthMode: ColumnWidthMode.fill,
-            rowHeight: 70.0,
-            headerRowHeight: 60.0,
-            source: new TtableDataSource(selectedTtable: selectedTtable),
-            columns: <GridColumn>[
-              GridColumn(columnName: 'Пара', label: Container(
-                  padding: EdgeInsets.all(5.0),
-                  alignment: Alignment.centerLeft,
-                  child: const Text(
-                    'Пара',
-                  )
-              )),
-              GridColumn(columnName: 'Предмет', label: Container(
-                  padding: EdgeInsets.all(5.0),
-                  alignment: Alignment.centerLeft,
-                  child: const Text(
-                    'Предмет',
-                  )
-              )),
-              GridColumn(columnName: 'Преподаватель', label: Container(
-                  padding: EdgeInsets.all(5.0),
-                  alignment: Alignment.centerRight,
-                  child: const Text(
-                    'Преподаватель',
-                  )
-              )),
-              GridColumn(columnName: 'Кабинет', label: Container(
-                  padding: EdgeInsets.all(5.0),
-                  alignment: Alignment.centerRight,
-                  child: const Text(
-                    'Кабинет',
-                  )
-              )),
-            ]
+          ) :  SfDataGrid(
+              onSwipeStart: (e) {
+                print(e.toString());
+                return true;
+              },
+                columnWidthMode: ColumnWidthMode.fill,
+                rowHeight: 70.0,
+                headerRowHeight: 60.0,
+                source:  new TtableDataSource(selectedTtable: selectedTtable),
+                // source: new TtableDataSource(selectedTtable: selectedTtable),
+                columns: <GridColumn>[
+                  GridColumn(columnName: 'Пара', label: Container(
+                      padding: EdgeInsets.all(5.0),
+                      alignment: Alignment.centerLeft,
+                      child: const Text(
+                        'Пара',
+                      )
+                  )),
+                  GridColumn(columnName: 'Предмет', label: Container(
+                      padding: EdgeInsets.all(5.0),
+                      alignment: Alignment.centerLeft,
+                      child: const Text(
+                        'Предмет',
+                      )
+                  )),
+                  GridColumn(columnName: 'Преподаватель', label: Container(
+                      padding: EdgeInsets.all(5.0),
+                      alignment: Alignment.centerRight,
+                      child: const Text(
+                        'Преподаватель',
+                      )
+                  )),
+                  GridColumn(columnName: 'Кабинет', label: Container(
+                      padding: EdgeInsets.all(5.0),
+                      alignment: Alignment.centerRight,
+                      child: const Text(
+                        'Кабинет',
+                      )
+                  )),
+                ]
 
-        ),
+            )
 
+      ),
       ),
       bottomNavigationBar: navigationBar(),
     );
@@ -121,7 +124,8 @@ class _MainStudentState extends State<MainStudent> {
 
   AnimatedContainer navigationBar() {
     return AnimatedContainer(
-      height: 70.0,
+      height: 50.0,
+      width: 40.0,
       duration: const Duration(milliseconds: 400),
       decoration: BoxDecoration(
         color: white,
@@ -132,10 +136,13 @@ class _MainStudentState extends State<MainStudent> {
         ),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        // crossAxisAlignment: CrossAxisAlignment.center,
+        // mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           for (int i = 0; i < navBtn.length; i++)
             GestureDetector(
+
               onTap: () => setState(() {
                 selectBtn = i;
                 switch (i){
@@ -158,21 +165,31 @@ class _MainStudentState extends State<MainStudent> {
                     selectedTtable = subbota;
                     break;
                 }
-                print(selectedTtable.length);
+                print(selectedTtable[0].weekday.weekdayName);
               }),
               child: iconBtn(i),
+              // child: Container(
+              //   alignment: Alignment.center,
+              //   width: 50.0,
+              //   height: 50.0,
+              //   child: Center(
+              //     child: Text(
+              //     navBtn[i].name,
+              //     style: bntText.copyWith(color: selectColor),
+              //   ),),
+              // )
             ),
         ],
       ),
     );
   }
 
-  SizedBox iconBtn(int i) {
+  Container iconBtn(int i) {
     bool isActive = selectBtn == i ? true : false;
-    var height = isActive ? 60.0 : 0.0;
-    var width = isActive ? 50.0 : 0.0;
-    return SizedBox(
-      width: 75.0,
+    var height = isActive ? 50.0 : 0.0;
+    var width = isActive ? 40.0 : 0.0;
+    return Container(
+      width: 45.0,
       child: Stack(
         children: [
           Align(
@@ -190,14 +207,6 @@ class _MainStudentState extends State<MainStudent> {
           ),
           Align(
             alignment: Alignment.center,
-            child: Image.asset(
-              navBtn[i].imagePath,
-              color: isActive ? selectColor : black,
-              scale: 2,
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
             child: Text(
               navBtn[i].name,
               style: isActive ? bntText.copyWith(color: selectColor) : bntText,
