@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constant.dart';
 import 'package:flutter_application_1/student/sudent_login.dart';
 
-class SignUp extends StatelessWidget {
-  const SignUp({Key? key}) : super(key: key);
+class TeacherLogin extends StatelessWidget {
+  const TeacherLogin({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,26 +35,22 @@ class SignUp extends StatelessWidget {
                     height: 250,
                     width: MediaQuery.of(context).size.width * 0.8,
                     margin: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.09),
+                        left: MediaQuery.of(context).size.width * 0.09,
+                        bottom: 50),
                     child: Image.asset("assets/images/login.png"),
                   ),
-                  InputField(headerText: "Username", hintTexti: "Username"),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  InputField(
-                      headerText: "Email", hintTexti: "dion@example.com"),
+                  InputField(headerText: "Логин", hintTexti: "Введите логин"),
                   const SizedBox(
                     height: 10,
                   ),
                   InputFieldPassword(
-                    headerText: "Password",
-                    hintTexti: "At least 8 Charecter",
+                    headerText: "Пароль",
+                    hintTexti: "Введите пароль",
                   ),
                   const CheckerBox(),
                   InkWell(
                     onTap: () {
-                      print("Sign up click");
+                      print("Войти");
                     },
                     child: Container(
                       width: MediaQuery.of(context).size.width,
@@ -66,7 +62,7 @@ class SignUp extends StatelessWidget {
                               const BorderRadius.all(Radius.circular(10))),
                       child: Center(
                         child: Text(
-                          "Sign up",
+                          "Войти",
                           style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w500,
@@ -93,7 +89,7 @@ class SignUp extends StatelessWidget {
                                     Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => Signin()));
+                                            builder: (context) => StudentLogin()));
                                     print("Sign in click");
                                   }),
                           ]),
@@ -146,18 +142,9 @@ class _CheckerBoxState extends State<CheckerBox> {
               }),
           Text.rich(
             TextSpan(
-                text: "I agree with ",
+                text: "Запомнить меня?",
                 style:
-                    TextStyle(color: grayshade.withOpacity(0.8), fontSize: 16),
-                children: [
-                  TextSpan(
-                      text: "Terms ",
-                      style: TextStyle(color: blue, fontSize: 16)),
-                  const TextSpan(text: "and "),
-                  TextSpan(
-                      text: "Policy",
-                      style: TextStyle(color: blue, fontSize: 16)),
-                ]),
+                    TextStyle(color: grayshade.withOpacity(0.8), fontSize: 16),),
           ),
         ],
       ),
@@ -287,16 +274,11 @@ class TopSginup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 15, left: 20),
+      margin: const EdgeInsets.only(top: 25, left: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.arrow_back_sharp,
-            color: whiteshade,
-            size: 40,
-          ),
           const SizedBox(
             width: 15,
           ),

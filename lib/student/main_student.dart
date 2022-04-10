@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:ui';
-
+import 'package:fluid_bottom_nav_bar/fluid_bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/text_style.dart';
-import 'package:flutter_application_1/data/model.dart';
+
 import 'package:flutter_application_1/model/Ttable.dart';
 import 'package:flutter_application_1/model/group.dart' as gr;
 import 'package:flutter_application_1/widgets/custom_paint.dart';
@@ -17,7 +17,6 @@ class MainStudent extends StatefulWidget {
   @override
   _MainStudentState createState() => _MainStudentState(group);
 }
-
 
 
 class _MainStudentState extends State<MainStudent> {
@@ -61,6 +60,38 @@ class _MainStudentState extends State<MainStudent> {
     selectedTtable = [];
     getGroupsData();
   }
+
+  void _handleNavigationChange(int index) {
+    setState(() {
+      switch (index){
+        case 0:
+          selectedTtable = ponedelnik;
+          break;
+        case 1:
+          selectedTtable = vtornik;
+          break;
+        case 2:
+          selectedTtable = sreda;
+          break;
+        case 3:
+          selectedTtable = tchetverg;
+          break;
+        case 4:
+          selectedTtable = piatnica;
+          break;
+        case 5:
+          selectedTtable = subbota;
+          break;
+      }
+      // _child = AnimatedSwitcher(
+      //   switchInCurve: Curves.easeOut,
+      //   switchOutCurve: Curves.easeIn,
+      //   duration: Duration(milliseconds: 500),
+      //   child: _child,
+      // );
+    });
+  }
+
   // ttable/getforgroup/{id}/{weekday}
   @override
   Widget build(BuildContext context) {
@@ -73,7 +104,10 @@ class _MainStudentState extends State<MainStudent> {
         child: Center (
           child: selectedTtable.isEmpty ? CircularProgressIndicator(
 
-          ) :  SfDataGrid(
+          ) : AnimatedSwitcher(switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeIn,
+            duration: Duration(milliseconds: 500),
+            child: SfDataGrid(
               onSwipeStart: (e) {
                 print(e.toString());
                 return true;
@@ -113,106 +147,47 @@ class _MainStudentState extends State<MainStudent> {
                       )
                   )),
                 ]
-
-            )
-
-      ),
-      ),
-      bottomNavigationBar: navigationBar(),
-    );
-  }
-
-  AnimatedContainer navigationBar() {
-    return AnimatedContainer(
-      height: 50.0,
-      width: 40.0,
-      duration: const Duration(milliseconds: 400),
-      decoration: BoxDecoration(
-        color: white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(selectBtn == 0 ? 0.0 : 20.0),
-          topRight:
-          Radius.circular(selectBtn == navBtn.length - 1 ? 0.0 : 20.0),
-        ),
-      ),
-      child: Row(
-        // crossAxisAlignment: CrossAxisAlignment.center,
-        // mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          for (int i = 0; i < navBtn.length; i++)
-            GestureDetector(
-
-              onTap: () => setState(() {
-                selectBtn = i;
-                switch (i){
-                  case 0:
-                      selectedTtable = ponedelnik;
-                    break;
-                  case 1:
-                    selectedTtable = vtornik;
-                    break;
-                  case 2:
-                    selectedTtable = sreda;
-                    break;
-                  case 3:
-                    selectedTtable = tchetverg;
-                    break;
-                  case 4:
-                    selectedTtable = piatnica;
-                    break;
-                  case 5:
-                    selectedTtable = subbota;
-                    break;
-                }
-                print(selectedTtable[0].weekday.weekdayName);
-              }),
-              child: iconBtn(i),
-              // child: Container(
-              //   alignment: Alignment.center,
-              //   width: 50.0,
-              //   height: 50.0,
-              //   child: Center(
-              //     child: Text(
-              //     navBtn[i].name,
-              //     style: bntText.copyWith(color: selectColor),
-              //   ),),
-              // )
-            ),
-        ],
-      ),
-    );
-  }
-
-  Container iconBtn(int i) {
-    bool isActive = selectBtn == i ? true : false;
-    var height = isActive ? 50.0 : 0.0;
-    var width = isActive ? 40.0 : 0.0;
-    return Container(
-      width: 45.0,
-      child: Stack(
-        children: [
-          Align(
-            alignment: Alignment.topCenter,
-            child: AnimatedContainer(
-              height: height,
-              width: width,
-              duration: const Duration(milliseconds: 600),
-              child: isActive
-                  ? CustomPaint(
-                painter: ButtonNotch(),
-              )
-                  : const SizedBox(),
-            ),
-          ),
-          Align(
-            alignment: Alignment.center,
-            child: Text(
-              navBtn[i].name,
-              style: isActive ? bntText.copyWith(color: selectColor) : bntText,
             ),
           )
+        ),
+      ),
+
+    //     ..onTap = () {
+    //   Navigator.pushReplacement(
+    //       context,
+    //       MaterialPageRoute(
+    //           builder: (context) => const TeacherLogin()));
+    //   print("Sign Up click");
+    // }
+
+      bottomNavigationBar: FluidNavBar(
+
+        icons: [
+          FluidNavBarIcon(
+              svgPath: "assets/icon/pn.svg",
+              backgroundColor: Colors.pink,
+              extras: {"label": "home"}
+            ),
+          FluidNavBarIcon(
+              icon: Icons.account_circle,
+              backgroundColor: Colors.pink,
+              extras: {"label": "ПН"}),
+          FluidNavBarIcon(
+              icon: Icons.settings,
+              backgroundColor: Colors.pink,
+              extras: {"label": "settings"}),
         ],
+        onChange: _handleNavigationChange,
+        style: FluidNavBarStyle(
+            barBackgroundColor: Colors.blue,
+            iconSelectedForegroundColor: Colors.white,
+            iconUnselectedForegroundColor: Colors.white60),
+        scaleFactor: 1.5,
+        defaultIndex: 0,
+        itemBuilder: (icon, item) => Semantics(
+          label: icon.extras!["label"],
+          child: item
+        ),
       ),
     );
   }

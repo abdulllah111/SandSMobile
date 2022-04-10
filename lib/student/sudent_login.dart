@@ -6,14 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constant.dart';
 import 'package:flutter_application_1/model/department.dart';
 import 'package:flutter_application_1/model/group.dart';
-import 'package:flutter_application_1/page/home_page.dart';
-import 'package:flutter_application_1/services/ModelFromApi.dart';
 import 'package:flutter_application_1/student/main_student.dart';
 import 'package:flutter_application_1/teacher/teacher_login.dart';
 import 'package:http/http.dart' as http;
 
 
-class Signin extends StatelessWidget {
+class StudentLogin extends StatelessWidget {
 
 
   Group? selgroup;
@@ -73,7 +71,7 @@ class Signin extends StatelessWidget {
                               const BorderRadius.all(Radius.circular(10))),
                       child: Center(
                         child: Text(
-                          "Sign in",
+                          "Войти",
                           style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w500,
@@ -85,7 +83,7 @@ class Signin extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(
                         left: MediaQuery.of(context).size.width * 0.149,
-                        top: MediaQuery.of(context).size.height * 0.08),
+                        top: MediaQuery.of(context).size.height * 0.03),
                     child: Text.rich(
                       TextSpan(
                           text: "Авторизоваться как преподаватель? ",
@@ -100,7 +98,7 @@ class Signin extends StatelessWidget {
                                     Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => const SignUp()));
+                                            builder: (context) => const TeacherLogin()));
                                     print("Sign Up click");
                                   }),
                           ]),
@@ -116,53 +114,6 @@ class Signin extends StatelessWidget {
   }
 }
 
-class CheckerBox extends StatefulWidget {
-  const CheckerBox({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  State<CheckerBox> createState() => _CheckerBoxState();
-}
-
-class _CheckerBoxState extends State<CheckerBox> {
-  bool? isCheck;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    isCheck = false;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(left: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Checkbox(
-              value: isCheck,
-              checkColor: whiteshade, // color of tick Mark
-              activeColor: blue,
-              onChanged: (val) {
-                setState(() {
-                  isCheck = val!;
-                  print(isCheck);
-                });
-              }),
-          Text.rich(
-            TextSpan(
-              text: "Remember me",
-              style: TextStyle(color: grayshade.withOpacity(0.8), fontSize: 16),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class InputField extends StatefulWidget {
 
@@ -415,14 +366,20 @@ class TopSginin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: const EdgeInsets.only(top: 15, left: 20),
+        margin: const EdgeInsets.only(top: 25, left: 20),
         child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                Icons.arrow_back_sharp,
-              )
-            ]));
+          children: [
+            const SizedBox(
+              width: 15,
+            ),
+            Text(
+              "Студент",
+              style: TextStyle(color: whiteshade, fontSize: 25),
+            )
+          ],
+        )
+    );
   }
 }

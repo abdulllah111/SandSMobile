@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/student/sudent_login.dart';
 import 'package:flutter_application_1/teacher/teacher_login.dart';
 
 void main() {
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const SignUp(),
+      home: StudentLogin(),
     );
   }
 }
