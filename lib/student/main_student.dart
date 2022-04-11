@@ -28,6 +28,7 @@ class _MainStudentState extends State<MainStudent> {
   late List<TTable> piatnica;
   late List<TTable> subbota;
   List<TTable> selectedTtable = [];
+
   final gr.Group? group;
   _MainStudentState(this.group);
 
@@ -164,18 +165,35 @@ class _MainStudentState extends State<MainStudent> {
 
         icons: [
           FluidNavBarIcon(
-              svgPath: "assets/icon/pn.svg",
+              svgPath: "assets/icon/PN.svg",
               backgroundColor: Colors.pink,
-              extras: {"label": "home"}
+              extras: {"label": "PN"}
             ),
           FluidNavBarIcon(
-              icon: Icons.account_circle,
+              svgPath: "assets/icon/VT.svg",
               backgroundColor: Colors.pink,
-              extras: {"label": "ПН"}),
+              extras: {"label": "vt"}
+              ),
           FluidNavBarIcon(
-              icon: Icons.settings,
+              svgPath: "assets/icon/SR.svg",
               backgroundColor: Colors.pink,
-              extras: {"label": "settings"}),
+              extras: {"label": "sr"}
+              ),
+          FluidNavBarIcon(
+              svgPath: "assets/icon/4T.svg",
+              backgroundColor: Colors.pink,
+              extras: {"label": "4t"}
+              ),
+          FluidNavBarIcon(
+              svgPath: "assets/icon/PT.svg",
+              backgroundColor: Colors.pink,
+              extras: {"label": "pt"}
+              ),
+          FluidNavBarIcon(
+              svgPath: "assets/icon/SB.svg",
+              backgroundColor: Colors.pink,
+              extras: {"label": "sb"}
+              ),
         ],
         onChange: _handleNavigationChange,
         style: FluidNavBarStyle(
