@@ -82,9 +82,8 @@ class StudentLogin extends StatelessWidget {
                   ),
                   Container(
                     margin: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.149,
                         top: MediaQuery.of(context).size.height * 0.03),
-                    child: Text.rich(
+                    child: Center(child: Text.rich(
                       TextSpan(
                           text: "Авторизоваться как преподаватель? ",
                           style: TextStyle(
@@ -102,7 +101,7 @@ class StudentLogin extends StatelessWidget {
                                     print("Sign Up click");
                                   }),
                           ]),
-                    ),
+                    ),)
                   ),
                 ],
               ),
@@ -144,7 +143,7 @@ class _InputFieldState extends State<InputField>
       return groupFromJson(responce.body);
     }
   }
-
+  
   Future getDepartmentsData() async {
     var responce = await http
         .get(Uri.https('abdul-arabp.site', '/restapi/public/api/department'));

@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constant.dart';
 import 'package:flutter_application_1/student/sudent_login.dart';
+import 'package:flutter_application_1/model/teacher.dart';
+import 'package:flutter_application_1/teacher/main_teacher.dart';
+import 'package:http/http.dart' as http;
+
 
 class TeacherLogin extends StatelessWidget {
   const TeacherLogin({Key? key}) : super(key: key);
@@ -39,50 +45,21 @@ class TeacherLogin extends StatelessWidget {
                         bottom: 50),
                     child: Image.asset("assets/images/login.png"),
                   ),
-                  InputField(headerText: "Логин", hintTexti: "Введите логин"),
+                  InputField(),
                   const SizedBox(
                     height: 10,
                   ),
-                  InputFieldPassword(
-                    headerText: "Пароль",
-                    hintTexti: "Введите пароль",
-                  ),
-                  const CheckerBox(),
-                  InkWell(
-                    onTap: () {
-                      print("Войти");
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.07,
-                      margin: const EdgeInsets.only(left: 20, right: 20),
-                      decoration: BoxDecoration(
-                          color: blue,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10))),
-                      child: Center(
-                        child: Text(
-                          "Войти",
-                          style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w500,
-                              color: whiteshade),
-                        ),
-                      ),
-                    ),
-                  ),
                   Container(
                     margin: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.18,
                         top: MediaQuery.of(context).size.height * 0.03),
-                    child: Text.rich(
+                    child: Center(child: Text.rich(
                       TextSpan(
                           text: "Авторизоваться как студент?",
                           style: TextStyle(
                               color: grayshade.withOpacity(0.8), fontSize: 16),
                           children: [
                             TextSpan(
-                                text: "Авторизоваться",
+                                text: "\nАвторизоваться",
                                 style: TextStyle(color: blue, fontSize: 16),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
@@ -93,7 +70,7 @@ class TeacherLogin extends StatelessWidget {
                                     print("Sign in click");
                                   }),
                           ]),
-                    ),
+                    ),)
                   ),
                 ],
               ),
@@ -105,74 +82,45 @@ class TeacherLogin extends StatelessWidget {
   }
 }
 
-class CheckerBox extends StatefulWidget {
-  const CheckerBox({
-    Key? key,
-  }) : super(key: key);
 
+
+
+class InputField extends StatefulWidget {
+  
   @override
-  State<CheckerBox> createState() => _CheckerBoxState();
+  State<InputField> createState() => _InputFieldState();
 }
 
-class _CheckerBoxState extends State<CheckerBox> {
+class _InputFieldState extends State<InputField> {
+  bool _visible = true;
   bool? isCheck;
+  late String login;
+  late String password;
+  late Teacher? teacher;
+
   @override
   void initState() {
     // TODO: implement initState
     isCheck = false;
     super.initState();
+    teacher = new Teacher(idteacher: 0, name: '');
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(left: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Checkbox(
-              value: isCheck,
-              checkColor: whiteshade, // color of tick Mark
-              activeColor: blue,
-              onChanged: (val) {
-                setState(() {
-                  isCheck = val!;
-                  print(isCheck);
-                });
-              }),
-          Text.rich(
-            TextSpan(
-                text: "Запомнить меня?",
-                style:
-                    TextStyle(color: grayshade.withOpacity(0.8), fontSize: 16),),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ignore: must_be_immutable
-class InputField extends StatelessWidget {
-  String headerText;
-  String hintTexti;
-  InputField({Key? key, required this.headerText, required this.hintTexti})
-      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        //Логин
         Container(
           margin: const EdgeInsets.only(
             left: 20,
             right: 20,
             bottom: 10,
           ),
-          child: Text(
-            headerText,
-            style: const TextStyle(
+          child: const Text(
+            "Логин",
+            style: TextStyle(
                 color: Colors.black, fontSize: 22, fontWeight: FontWeight.w500),
           ),
         ),
@@ -188,49 +136,28 @@ class InputField extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: TextField(
-                decoration: InputDecoration(
-                  hintText: hintTexti,
+                decoration: const InputDecoration(
+                  hintText: "Введите логин",
                   border: InputBorder.none,
                 ),
+               onChanged: (value){
+                 setState(() {
+                   login = value;
+                 });
+               },
               ),
             )
-            //IntrinsicHeight
-
-            ),
-      ],
-    );
-  }
-}
-
-class InputFieldPassword extends StatefulWidget {
-  String headerText;
-  String hintTexti;
-
-  InputFieldPassword(
-      {Key? key, required this.headerText, required this.hintTexti})
-      : super(key: key);
-
-  @override
-  State<InputFieldPassword> createState() => _InputFieldPasswordState();
-}
-
-class _InputFieldPasswordState extends State<InputFieldPassword> {
-  bool _visible = true;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
+          ),
+          //Пароль
+          Container(
           margin: const EdgeInsets.only(
             left: 20,
             right: 20,
             bottom: 10,
           ),
-          child: Text(
-            widget.headerText,
-            style: const TextStyle(
+          child: const Text(
+            "Пароль",
+            style: TextStyle(
                 color: Colors.black, fontSize: 22, fontWeight: FontWeight.w500),
           ),
         ),
@@ -248,16 +175,93 @@ class _InputFieldPasswordState extends State<InputFieldPassword> {
             child: TextField(
               obscureText: _visible,
               decoration: InputDecoration(
-                  hintText: widget.hintTexti,
-                  border: InputBorder.none,
-                  suffixIcon: IconButton(
-                      icon: Icon(
-                          _visible ? Icons.visibility : Icons.visibility_off),
-                      onPressed: () {
-                        setState(() {
-                          _visible = !_visible;
-                        });
-                      })),
+                hintText: "Введите пароль",
+                border: InputBorder.none,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                   _visible ? Icons.visibility : Icons.visibility_off
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _visible = !_visible;
+                    });
+                  }
+                )
+              ),
+              onChanged: (value){
+                 setState(() {
+                   password = value;
+                 });
+               },
+            ),
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(left: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Checkbox(
+                  value: isCheck,
+                  checkColor: whiteshade, // color of tick Mark
+                  activeColor: blue,
+                  onChanged: (val) {
+                    setState(() {
+                      isCheck = val!;
+                      print(isCheck);
+                    });
+                  }),
+              Text.rich(
+                TextSpan(
+                    text: "Запомнить меня?",
+                    style:
+                        TextStyle(color: grayshade.withOpacity(0.8), fontSize: 16),),
+              ),
+            ],
+          ),
+        ),
+        InkWell(
+          onTap: () async {
+            if(login!="" && password != ""){
+              var add = "";
+              var client = http.Client();
+              Teacher? _teacher;
+              try {
+                var response = await client.post(
+                    Uri.https('abdul-arabp.site', '/restapi/public/api/teacher/login'),
+                    body: {'login': login, 'password': password});
+                    _teacher = Teacher.fromJson(json.decode(response.body));
+              } finally {
+                client.close();
+              }
+
+              setState(() {
+                teacher = _teacher;
+              });
+            }
+            if(teacher != null){
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MainTeacher(teacher: teacher)));
+            }
+          },
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.07,
+            margin: const EdgeInsets.only(left: 20, right: 20),
+            decoration: BoxDecoration(
+                color: blue,
+                borderRadius:
+                    const BorderRadius.all(Radius.circular(10))),
+            child: Center(
+              child: Text(
+                "Войти",
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w500,
+                    color: whiteshade),
+              ),
             ),
           ),
         ),

@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:flutter_application_1/model/teacher.dart';
+
 List<TTable> tTableFromJson(String str) => List<TTable>.from(json.decode(str).map((x) => TTable.fromJson(x)));
 
 String tTableToJson(List<TTable> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
@@ -140,25 +142,7 @@ class Group {
   };
 }
 
-class Teacher {
-  Teacher({
-    required this.idteacher,
-    required this.name,
-  });
 
-  int idteacher;
-  String name;
-
-  factory Teacher.fromJson(Map<String, dynamic> json) => Teacher(
-    idteacher: json["idteacher"],
-    name: json["name"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "idteacher": idteacher,
-    "name": name,
-  };
-}
 
 class Lesson {
   Lesson({
