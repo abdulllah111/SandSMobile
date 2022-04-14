@@ -5,16 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/text_style.dart';
 
 import 'package:flutter_application_1/model/Ttable.dart';
+import 'package:flutter_application_1/model/teacher.dart' as tch;
 import 'package:flutter_application_1/widgets/custom_paint.dart';
 import 'package:flutter_application_1/constants/color.dart';
 import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-import '../model/teacher.dart';
 
 class MainTeacher extends StatefulWidget {
   const MainTeacher({Key? key, required this.teacher}) : super(key: key);
-  final Teacher? teacher;
+  final tch.Teacher? teacher;
   @override
   _MainTeacherState createState() => _MainTeacherState(teacher);
 }
@@ -28,9 +28,9 @@ class _MainTeacherState extends State<MainTeacher> {
   late List<TTable> tchetverg;
   late List<TTable> piatnica;
   late List<TTable> subbota;
-  List<TTable> selectedTtable = [];
-
-  final Teacher? teacher;
+  int selectedTtable = 0;
+  late List<List<TTable>> allTtables = [];
+  final tch.Teacher? teacher;
   _MainTeacherState(this.teacher);
 
   Future getGroupsData() async {
@@ -53,13 +53,15 @@ class _MainTeacherState extends State<MainTeacher> {
       tchetverg = tTableFromJson(responce4.body);
       piatnica = tTableFromJson(responce5.body);
       subbota = tTableFromJson(responce6.body);
-      selectedTtable = ponedelnik;
+      allTtables = [ponedelnik, vtornik, sreda, tchetverg, piatnica, subbota];
+      selectedTtable = DateTime.now().weekday-1;
     });
   }
   void initState() {
     super.initState();
+    allTtables = [];
     ponedelnik = [];
-    selectedTtable = [];
+    selectedTtable = 0;
     getGroupsData();
   }
 
@@ -67,22 +69,22 @@ class _MainTeacherState extends State<MainTeacher> {
     setState(() {
       switch (index){
         case 0:
-          selectedTtable = ponedelnik;
+          selectedTtable = 0;
           break;
         case 1:
-          selectedTtable = vtornik;
+          selectedTtable = 1;
           break;
         case 2:
-          selectedTtable = sreda;
+          selectedTtable = 2;
           break;
         case 3:
-          selectedTtable = tchetverg;
+          selectedTtable = 3;
           break;
         case 4:
-          selectedTtable = piatnica;
+          selectedTtable = 4;
           break;
         case 5:
-          selectedTtable = subbota;
+          selectedTtable = 5;
           break;
       }
       // _child = AnimatedSwitcher(
@@ -100,15 +102,29 @@ class _MainTeacherState extends State<MainTeacher> {
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
+        backgroundColor: lightblue,
         title: Text("Расписание"),
       ),
       body: Container(
         child: Center (
-          child: selectedTtable.isEmpty ? CircularProgressIndicator(
+          child: allTtables.isEmpty ? CircularProgressIndicator(
 
           ) : AnimatedSwitcher(switchInCurve: Curves.easeOut,
             switchOutCurve: Curves.easeIn,
             duration: Duration(milliseconds: 500),
+            child: GestureDetector(onHorizontalDragEnd: (details) => {
+              if(details.primaryVelocity! > 0 && selectedTtable > 0){
+                setState((){
+                  selectedTtable--;
+                  _handleNavigationChange(selectedTtable);
+                },)
+              }
+              else if (details.primaryVelocity! < 0 && selectedTtable < 5) {
+                setState((){
+                  selectedTtable++;
+                },)
+              }
+            },
             child: SfDataGrid(
               onSwipeStart: (e) {
                 print(e.toString());
@@ -117,7 +133,7 @@ class _MainTeacherState extends State<MainTeacher> {
                 columnWidthMode: ColumnWidthMode.fill,
                 rowHeight: 70.0,
                 headerRowHeight: 60.0,
-                source:  new TtableDataSource(selectedTtable: selectedTtable),
+                source:  new TtableDataSource(selectedTtable: allTtables[selectedTtable]),
                 // source: new TtableDataSource(selectedTtable: selectedTtable),
                 columns: <GridColumn>[
                   GridColumn(columnName: 'Пара', label: Container(
@@ -150,17 +166,11 @@ class _MainTeacherState extends State<MainTeacher> {
                   )),
                 ]
             ),
+            )
           )
         ),
       ),
 
-    //     ..onTap = () {
-    //   Navigator.pushReplacement(
-    //       context,
-    //       MaterialPageRoute(
-    //           builder: (context) => const TeacherLogin()));
-    //   print("Sign Up click");
-    // }
 
       bottomNavigationBar: FluidNavBar(
 
@@ -198,11 +208,11 @@ class _MainTeacherState extends State<MainTeacher> {
         ],
         onChange: _handleNavigationChange,
         style: FluidNavBarStyle(
-            barBackgroundColor: Colors.blue,
+            barBackgroundColor: lightblue,
             iconSelectedForegroundColor: Colors.white,
             iconUnselectedForegroundColor: Colors.white60),
         scaleFactor: 1.5,
-        defaultIndex: 0,
+        defaultIndex: DateTime.now().weekday-1,
         itemBuilder: (icon, item) => Semantics(
           label: icon.extras!["label"],
           child: item

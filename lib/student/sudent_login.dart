@@ -3,12 +3,13 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/constant.dart';
 import 'package:flutter_application_1/model/department.dart';
 import 'package:flutter_application_1/model/group.dart';
 import 'package:flutter_application_1/student/main_student.dart';
 import 'package:flutter_application_1/teacher/teacher_login.dart';
 import 'package:http/http.dart' as http;
+
+import '../constants/color.dart';
 
 
 class StudentLogin extends StatelessWidget {

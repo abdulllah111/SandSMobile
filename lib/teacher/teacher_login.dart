@@ -2,11 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/constant.dart';
 import 'package:flutter_application_1/student/sudent_login.dart';
 import 'package:flutter_application_1/model/teacher.dart';
 import 'package:flutter_application_1/teacher/main_teacher.dart';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+
+import '../constants/color.dart';
+
 
 
 class TeacherLogin extends StatelessWidget {
@@ -97,7 +100,6 @@ class _InputFieldState extends State<InputField> {
   late String login;
   late String password;
   late Teacher? teacher;
-
   @override
   void initState() {
     // TODO: implement initState
@@ -240,6 +242,9 @@ class _InputFieldState extends State<InputField> {
               });
             }
             if(teacher != null){
+            if(isCheck == true){
+              Hive.box<Teacher>('teacher').add(teacher!);
+            }
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
