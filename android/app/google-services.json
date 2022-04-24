@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "393151066082",
+    "project_id": "sands-8e750",
+    "storage_bucket": "sands-8e750.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:393151066082:android:f29fc766aaa938f697d3bb",
+        "android_client_info": {
+          "package_name": "com.example.sands"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "393151066082-9p0g5gd9qnafpm88kphfpselqk37luin.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCW6Ec54gLM39EwOrboRGneyH3HiiNyOVk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "393151066082-9p0g5gd9qnafpm88kphfpselqk37luin.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

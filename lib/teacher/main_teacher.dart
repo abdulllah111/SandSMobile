@@ -1,4 +1,5 @@
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fluid_bottom_nav_bar/fluid_bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 
@@ -9,15 +10,16 @@ import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 
-class MainTeacher extends StatefulWidget {
-  const MainTeacher({Key? key, required this.teacher}) : super(key: key);
+class TtableFromTeacher extends StatefulWidget {
+  const TtableFromTeacher({Key? key, required this.teacher}) : super(key: key);
   final tch.Teacher? teacher;
   @override
   _MainTeacherState createState() => _MainTeacherState(teacher);
 }
 
 
-class _MainTeacherState extends State<MainTeacher> {
+
+class _MainTeacherState extends State<TtableFromTeacher> with SingleTickerProviderStateMixin {
   int selectBtn = 0;
   late List<TTable> ponedelnik;
   late List<TTable> vtornik;
@@ -28,7 +30,48 @@ class _MainTeacherState extends State<MainTeacher> {
   int selectedTtable = 0;
   late List<List<TTable>> allTtables = [];
   final tch.Teacher? teacher;
+
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+  bool _showMenu = true;
+
+   void toggle() {
+    FocusScope.of(context)
+        .requestFocus(FocusNode());
+        if(_showMenu){
+    _animationController.forward();
+    _showMenu = false;
+        }
+        else{
+            _animationController.reverse();
+            _showMenu = true;
+        }
+  }
+
+  void updateAnimation(double dx) {
+    _animationController.value += dx / MediaQuery.of(context).size.width;
+  }
+
   _MainTeacherState(this.teacher);
+  late String? token;
+  void getToken(){
+    FirebaseMessaging.instance.getToken().then((value) {
+      token = value;
+      print(token);
+    });
+  }
+  void saveToken() async{
+    
+    var client = http.Client();
+    try {
+      var response = await client.post(
+      Uri.https('abdul-arabp.site', '/restapi/public/api/push'),
+      body: {'idteacher': teacher!.idteacher.toString(), 'token': token, 'api_token': 'a23ew9dosTeacher21apksfjnsdjlk'});
+      var a = response.body;
+    } finally {
+      client.close();
+    }
+  }
 
   Future getGroupsData() async {
     var responce1 = await http.get(Uri.https('abdul-arabp.site',
@@ -51,15 +94,36 @@ class _MainTeacherState extends State<MainTeacher> {
       piatnica = tTableFromJson(responce5.body);
       subbota = tTableFromJson(responce6.body);
       allTtables = [ponedelnik, vtornik, sreda, tchetverg, piatnica, subbota];
-      selectedTtable = DateTime.now().weekday-1;
+      if(DateTime.now().weekday-1 == 6){
+        selectedTtable = 0;
+      }
+      else{
+        selectedTtable = DateTime.now().weekday-1;
+      }
+      saveToken();
     });
   }
   void initState() {
-    super.initState();
+_animationController = AnimationController(
+      vsync: this,
+      duration: Duration(
+        milliseconds: 1000,
+      ),
+    );
+
+    _animation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeIn,
+    )..addListener(() {
+        setState(() {});
+      });
+
     allTtables = [];
     ponedelnik = [];
     selectedTtable = 0;
     getGroupsData();
+    getToken();
+    super.initState();
   }
 
   void _handleNavigationChange(int index) {
@@ -96,12 +160,29 @@ class _MainTeacherState extends State<MainTeacher> {
   // ttable/getforgroup/{id}/{weekday}
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Transform(
+      transform: Matrix4.identity()
+        ..setEntry(3, 2, 0.001)
+        ..translate(250.0 * _animationController.value)
+        ..rotateY(1 * _animationController.value)
+        ..scale(1 - 0.2 * _animationController.value),
+      alignment: FractionalOffset.center,
+      child: GestureDetector(
+        onPanUpdate: (pan) {
+          updateAnimation(pan.delta.dx);
+        },
+        onPanEnd: (_) {
+          if (_showMenu) {
+            _animationController.forward();
+            _showMenu = false;
+          } else {
+            _animationController.reverse();
+            _showMenu = true;
+          }
+        },
+        child: Scaffold(
       backgroundColor: bgColor,
-      appBar: AppBar(
-        backgroundColor: lightblue,
-        title: Text("Расписание"),
-      ),
+      appBar: MyAppBar(toggle: toggle), 
       body: Container(
         child: Center (
           child: allTtables.isEmpty ? CircularProgressIndicator(
@@ -109,19 +190,6 @@ class _MainTeacherState extends State<MainTeacher> {
           ) : AnimatedSwitcher(switchInCurve: Curves.easeOut,
             switchOutCurve: Curves.easeIn,
             duration: Duration(milliseconds: 500),
-            child: GestureDetector(onHorizontalDragEnd: (details) => {
-              if(details.primaryVelocity! > 0 && selectedTtable > 0){
-                setState((){
-                  selectedTtable--;
-                  _handleNavigationChange(selectedTtable);
-                },)
-              }
-              else if (details.primaryVelocity! < 0 && selectedTtable < 5) {
-                setState((){
-                  selectedTtable++;
-                },)
-              }
-            },
             child: SfDataGrid(
               onSwipeStart: (e) {
                 print(e.toString());
@@ -130,7 +198,7 @@ class _MainTeacherState extends State<MainTeacher> {
                 columnWidthMode: ColumnWidthMode.fill,
                 rowHeight: 70.0,
                 headerRowHeight: 60.0,
-                source:  new TtableDataSource(selectedTtable: allTtables[selectedTtable]),
+                source: new TtableDataSource(selectedTtable: allTtables[selectedTtable]),
                 // source: new TtableDataSource(selectedTtable: selectedTtable),
                 columns: <GridColumn>[
                   GridColumn(columnName: 'Пара', label: Container(
@@ -163,7 +231,6 @@ class _MainTeacherState extends State<MainTeacher> {
                   )),
                 ]
             ),
-            )
           )
         ),
       ),
@@ -209,13 +276,16 @@ class _MainTeacherState extends State<MainTeacher> {
             iconSelectedForegroundColor: Colors.white,
             iconUnselectedForegroundColor: Colors.white60),
         scaleFactor: 1.5,
-        defaultIndex: DateTime.now().weekday-1,
+        defaultIndex: selectedTtable,
         itemBuilder: (icon, item) => Semantics(
           label: icon.extras!["label"],
           child: item
         ),
       ),
-    );
+    ),
+        ));
+    
+    
   }
 }
 
@@ -249,5 +319,41 @@ class TtableDataSource extends DataGridSource {
             child: Text(dataGridCell.value.toString()),
           );
         }).toList());
+  }
+}
+class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
+  final Function toggle;
+
+  MyAppBar({required this.toggle});
+
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+
+  @override
+  _MyAppBar createState() => _MyAppBar();
+}
+
+class _MyAppBar extends State<MyAppBar> {
+  
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(centerTitle: false, 
+    backgroundColor: lightblue,
+    title: Row(children: [
+      TextButton(
+          onPressed: () {
+            
+            widget.toggle();
+            
+          }, child: Icon(
+              Icons.menu,
+              color: Colors.white,
+              size: 25,
+            ),
+          ),
+      Text("Расписание"), 
+    ],)
+    );
   }
 }

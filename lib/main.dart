@@ -1,5 +1,6 @@
 
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:sands/model/teacher.dart';
 import 'package:sands/student/sudent_login.dart';
@@ -7,20 +8,16 @@ import 'package:sands/teacher/main_teacher.dart';
 import 'package:hive/hive.dart';
 
 import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:sands/teacher/teacher_login.dart';
+import 'package:sands/teacher/teacher_main.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
-// var dir = Directory(appDocumentDir.path);
-//  await dir.create(recursive: true);
-//  Hive
-//     ..init(appDocumentDir.path)
-//     ..registerAdapter(TeacherAdapter());
-  
   Hive.registerAdapter(TeacherAdapter());
   Hive.init(appDocumentDir.path);
-  // await Hive.initFlutter('/lib/');
   await Hive.openBox<Teacher>('teacher');
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -32,11 +29,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: '',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Hive.box<Teacher>('teacher').length == 0 ? StudentLogin() : MainTeacher(teacher: Hive.box<Teacher>('teacher').get(0)),
+      initialRoute: '/student',
+      routes: {
+        '/student':(context) => Hive.box<Teacher>('teacher').length == 0 ? StudentLogin() : MainTeacher(teacher: Hive.box<Teacher>('teacher').get(0)),
+        '/teacher':(context) => TeacherLogin(),
+      },
     );
   }
 }

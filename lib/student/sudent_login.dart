@@ -58,7 +58,6 @@ class StudentLogin extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => MainStudent(group: selgroup)));
-                        print("Sign up click");
                       }
                     },
                     child: Container(
@@ -95,11 +94,9 @@ class StudentLogin extends StatelessWidget {
                                 style: TextStyle(color: blue, fontSize: 16),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
-                                    Navigator.pushReplacement(
+                                    Navigator.pushReplacementNamed(
                                         context,
-                                        MaterialPageRoute(
-                                            builder: (context) => const TeacherLogin()));
-                                    print("Sign Up click");
+                                        '/teacher');
                                   }),
                           ]),
                     ),)

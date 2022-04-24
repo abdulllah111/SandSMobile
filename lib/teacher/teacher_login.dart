@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:sands/student/sudent_login.dart';
@@ -7,6 +10,7 @@ import 'package:sands/model/teacher.dart';
 import 'package:sands/teacher/main_teacher.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import 'package:sands/teacher/teacher_main.dart';
 
 import '../constants/color.dart';
 
@@ -66,11 +70,10 @@ class TeacherLogin extends StatelessWidget {
                                 style: TextStyle(color: blue, fontSize: 16),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
-                                    Navigator.pushReplacement(
+                                    Navigator.pushReplacementNamed(
                                         context,
-                                        MaterialPageRoute(
-                                            builder: (context) => StudentLogin()));
-                                    print("Sign in click");
+                                        '/student');
+                                    print("Студент");
                                   }),
                           ]),
                     ),)
@@ -100,6 +103,8 @@ class _InputFieldState extends State<InputField> {
   late String login;
   late String password;
   late Teacher? teacher;
+  late String? token;
+  
   @override
   void initState() {
     // TODO: implement initState
@@ -107,7 +112,7 @@ class _InputFieldState extends State<InputField> {
     super.initState();
     teacher = new Teacher(idteacher: 0, name: '');
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -244,7 +249,9 @@ class _InputFieldState extends State<InputField> {
             if(teacher != null){
             if(isCheck == true){
               Hive.box<Teacher>('teacher').add(teacher!);
+              
             }
+              
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(

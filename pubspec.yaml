@@ -82,8 +82,18 @@ flutter:
     - assets/images/login.png
     - assets/icon/
     - assets/launcher/ico.png
+    - assets/images/login_background.jpg
+    - assets/images/menu_background.jpg
+    - assets/images/doge.jpg
 dependencies:
-  { path_provider: ^2.0.9 }
+  {
+    path_provider: ^2.0.9,
+    firebase_analytics: ^9.1.5,
+    firebase_core: ^1.14.1,
+    firebase_crashlytics: ^2.6.2,
+    firebase_messaging: ^11.2.13,
+    cupertino_icons: ^1.0.2,
+  }
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
