@@ -8,7 +8,6 @@ import 'package:sands/model/group.dart';
 import 'package:sands/student/main_student.dart';
 import 'package:sands/teacher/teacher_login.dart';
 import 'package:http/http.dart' as http;
-
 import '../constants/color.dart';
 
 
@@ -26,7 +25,7 @@ class StudentLogin extends StatelessWidget {
           Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            color: blue,
+            color:  Theme.of(context).primaryColor,
           ),
           const TopSginin(),
           Positioned(
@@ -35,21 +34,13 @@ class StudentLogin extends StatelessWidget {
               height: MediaQuery.of(context).size.height * 0.9,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                  color: whiteshade,
+                  color: Theme.of(context).primaryColorDark,
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(45),
                       topRight: Radius.circular(45))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    height: 250,
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    margin: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.09,
-                        bottom: 50),
-                    child: Image.asset("assets/images/login.png"),
-                  ),
                   InputField(collback: (Group? value) { selgroup = value; },),
                   InkWell(
                     onTap: () {
@@ -66,16 +57,14 @@ class StudentLogin extends StatelessWidget {
                       margin:
                           const EdgeInsets.only(left: 20, right: 20, top: 20),
                       decoration: BoxDecoration(
-                          color: blue,
+                          color: Theme.of(context).primaryColor,
                           borderRadius:
                               const BorderRadius.all(Radius.circular(10))),
                       child: Center(
                         child: Text(
                           "Войти",
-                          style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w500,
-                              color: whiteshade),
+                          style: Theme.of(context).textTheme.displayLarge,
+                          
                         ),
                       ),
                     ),
@@ -86,12 +75,11 @@ class StudentLogin extends StatelessWidget {
                     child: Center(child: Text.rich(
                       TextSpan(
                           text: "Авторизоваться как преподаватель? ",
-                          style: TextStyle(
-                              color: grayshade.withOpacity(0.8), fontSize: 16),
+                          style: Theme.of(context).textTheme.bodyLarge,
                           children: [
                             TextSpan(
                                 text: "\nАвторизоваться",
-                                style: TextStyle(color: blue, fontSize: 16),
+                                style: Theme.of(context).textTheme.bodyMedium,
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
                                     Navigator.pushReplacementNamed(
@@ -130,7 +118,6 @@ class _InputFieldState extends State<InputField>
   late Group? selectedGroup = new Group(idgroup: 0, groupName: "groupName", iddepartment: 1);
   late var selecteddep;
   var groupsIsEnabled = false;
-
   Future getGroupsData() async {
     if (selecteddep != null) {
       var responce = await http.get(Uri.https('abdul-arabp.site',
@@ -173,40 +160,50 @@ class _InputFieldState extends State<InputField>
       children: [
         Container(
           margin: const EdgeInsets.only(
+            top: 200,
             left: 20,
             right: 20,
             bottom: 10,
           ),
-          child: const Text(
+          child: Text(
             "Выберите отделение",
-            style: TextStyle(
-                color: Colors.black54,
-                fontSize: 19,
-                fontWeight: FontWeight.normal),
+            style:  Theme.of(context).textTheme.bodyLarge,
           ),
         ),
         Container(
-            margin: EdgeInsets.only(top: 5, bottom: 35),
+          height: 50,
+          decoration: BoxDecoration(
+            color: Theme.of(context).disabledColor,
+            borderRadius: BorderRadius.circular(5),
+          ),
+            margin: EdgeInsets.only(top: 5, bottom: 35, left: 20, right: 20),
             padding: EdgeInsets.only(left: 0),
             child: Row(
               children: [
                 PopupMenuButton(
+                  
+                  color: Theme.of(context).primaryColorDark.withOpacity(0.0),
+                  
+                  position: PopupMenuPosition.under,
                   itemBuilder: (BuildContext context) => departments
                       .map((item) => PopupMenuItem(
-                            child: Container(
+                        child: Center(child: Container(
+                                width: 400,
                                 margin: EdgeInsets.all(0),
                                 padding: EdgeInsets.all(4),
                                 decoration: BoxDecoration(
-                                  color: grayshade.withOpacity(0.5),
+                                  color: Theme.of(context).primaryColorLight.withOpacity(0.5),
                                   // border: Border.all(
                                   //   width: 1,
                                   // ),
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child:
-                                    Text(item.departmentName, softWrap: true)),
+                                    Text(item.departmentName, softWrap: true)
+                                )),
                             value: item,
-                          ))
+                          )
+                          )
                       .toList(),
                   onSelected: (value) {
                     setState(() {
@@ -219,10 +216,7 @@ class _InputFieldState extends State<InputField>
                 Flexible(
                   child: Text(
                     selecteddep.departmentName,
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 19,
-                        fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.bodyMedium,
                     softWrap: true,
                     maxLines: 4,
                   ),
@@ -235,18 +229,22 @@ class _InputFieldState extends State<InputField>
             right: 20,
             bottom: 10,
           ),
-          child: const Text("Выберите группу",
-              style: TextStyle(
-                  color: Colors.black54,
-                  fontSize: 19,
-                  fontWeight: FontWeight.normal)),
+          child: Text("Выберите группу",
+              style: Theme.of(context).textTheme.bodyLarge),
         ),
         Container(
-            margin: EdgeInsets.only(top: 5, bottom: 10),
+          height: 50,
+          decoration: BoxDecoration(
+            color: Theme.of(context).disabledColor,
+            borderRadius: BorderRadius.circular(5),
+          ),
+            margin: EdgeInsets.only(top: 5, bottom: 10, left: 20, right: 20),
             padding: EdgeInsets.all(0),
             child: Row(
               children: [
                 PopupMenuButton(
+                  position: PopupMenuPosition.under,
+                  color: Theme.of(context).primaryColorDark.withOpacity(0.0),
                   padding: EdgeInsets.all(0),
                   itemBuilder: (BuildContext context) => groups
                       .map((item) => PopupMenuItem(
@@ -257,7 +255,7 @@ class _InputFieldState extends State<InputField>
                                 margin: EdgeInsets.only(left: 15),
                                 padding: EdgeInsets.all(4),
                                 decoration: BoxDecoration(
-                                  color: grayshade.withOpacity(0.5),
+                                  color: Theme.of(context).primaryColorLight.withOpacity(0.9),
                                   // border: Border.all(
                                   //   width: 1,
                                   // ),
@@ -266,10 +264,6 @@ class _InputFieldState extends State<InputField>
                                 child: Text(
                                   item.groupName,
                                   softWrap: true,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500),
                                 )),
                             value: item,
                           ))
@@ -285,14 +279,8 @@ class _InputFieldState extends State<InputField>
                   child: Text(
                     selectedGroup?.groupName ?? "",
                     style: groupsIsEnabled
-                        ? const TextStyle(
-                            color: Colors.black,
-                            fontSize: 19,
-                            fontWeight: FontWeight.bold)
-                        : const TextStyle(
-                            color: Colors.black54,
-                            fontSize: 19,
-                            fontWeight: FontWeight.normal),
+                        ? Theme.of(context).textTheme.bodyMedium
+                        : Theme.of(context).textTheme.bodySmall,
                     softWrap: true,
                     maxLines: 4,
                   ),
@@ -305,55 +293,6 @@ class _InputFieldState extends State<InputField>
 }
 
 // ignore: must_be_immutable
-class InputFields extends StatelessWidget {
-  String headerText;
-  String hintTexti;
-
-  InputFields({Key? key, required this.headerText, required this.hintTexti})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          margin: const EdgeInsets.only(
-            left: 20,
-            right: 20,
-            bottom: 10,
-          ),
-          child: Text(
-            headerText,
-            style: const TextStyle(
-                color: Colors.black, fontSize: 22, fontWeight: FontWeight.w500),
-          ),
-        ),
-        Container(
-            margin: const EdgeInsets.only(left: 20, right: 20),
-            decoration: BoxDecoration(
-              color: grayshade.withOpacity(0.5),
-              // border: Border.all(
-              //   width: 1,
-              // ),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: hintTexti,
-                  border: InputBorder.none,
-                ),
-              ),
-            )
-            //IntrinsicHeight
-
-            ),
-      ],
-    );
-  }
-}
 
 class TopSginin extends StatelessWidget {
   const TopSginin({
@@ -373,7 +312,7 @@ class TopSginin extends StatelessWidget {
             ),
             Text(
               "Студент",
-              style: TextStyle(color: whiteshade, fontSize: 25),
+              style: Theme.of(context).textTheme.displayMedium,
             )
           ],
         )

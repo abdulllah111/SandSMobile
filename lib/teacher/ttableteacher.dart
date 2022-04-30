@@ -7,7 +7,11 @@ import 'package:sands/model/Ttable.dart';
 import 'package:sands/model/teacher.dart' as tch;
 import 'package:sands/constants/color.dart';
 import 'package:http/http.dart' as http;
+import 'package:sands/pages/menu_page.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+
+import '../widgets/myappbar.dart';
+import '../widgets/mydraver.dart';
 
 
 class TtableFromTeacher extends StatefulWidget {
@@ -27,29 +31,13 @@ class _MainTeacherState extends State<TtableFromTeacher> with SingleTickerProvid
   late List<TTable> tchetverg;
   late List<TTable> piatnica;
   late List<TTable> subbota;
-  int selectedTtable = 0;
+  late int selectedTtable;
   late List<List<TTable>> allTtables = [];
   final tch.Teacher? teacher;
 
-  late AnimationController _animationController;
-  late Animation<double> _animation;
-  bool _showMenu = true;
 
    void toggle() {
-    FocusScope.of(context)
-        .requestFocus(FocusNode());
-        if(_showMenu){
-    _animationController.forward();
-    _showMenu = false;
-        }
-        else{
-            _animationController.reverse();
-            _showMenu = true;
-        }
-  }
-
-  void updateAnimation(double dx) {
-    _animationController.value += dx / MediaQuery.of(context).size.width;
+   
   }
 
   _MainTeacherState(this.teacher);
@@ -94,33 +82,19 @@ class _MainTeacherState extends State<TtableFromTeacher> with SingleTickerProvid
       piatnica = tTableFromJson(responce5.body);
       subbota = tTableFromJson(responce6.body);
       allTtables = [ponedelnik, vtornik, sreda, tchetverg, piatnica, subbota];
-      if(DateTime.now().weekday-1 == 6){
-        selectedTtable = 0;
-      }
-      else{
-        selectedTtable = DateTime.now().weekday-1;
-      }
       saveToken();
     });
   }
   void initState() {
-_animationController = AnimationController(
-      vsync: this,
-      duration: Duration(
-        milliseconds: 1000,
-      ),
-    );
-
-    _animation = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeIn,
-    )..addListener(() {
-        setState(() {});
-      });
 
     allTtables = [];
     ponedelnik = [];
-    selectedTtable = 0;
+    if(DateTime.now().weekday-1 == 6){
+      selectedTtable = 0;
+    }
+    else{
+      selectedTtable = DateTime.now().weekday-1;
+    }
     getGroupsData();
     getToken();
     super.initState();
@@ -148,133 +122,105 @@ _animationController = AnimationController(
           selectedTtable = 5;
           break;
       }
-      // _child = AnimatedSwitcher(
-      //   switchInCurve: Curves.easeOut,
-      //   switchOutCurve: Curves.easeIn,
-      //   duration: Duration(milliseconds: 500),
-      //   child: _child,
-      // );
     });
   }
 
   // ttable/getforgroup/{id}/{weekday}
   @override
   Widget build(BuildContext context) {
-    return Transform(
-      transform: Matrix4.identity()
-        ..setEntry(3, 2, 0.001)
-        ..translate(250.0 * _animationController.value)
-        ..rotateY(1 * _animationController.value)
-        ..scale(1 - 0.2 * _animationController.value),
-      alignment: FractionalOffset.center,
-      child: GestureDetector(
-        onPanUpdate: (pan) {
-          updateAnimation(pan.delta.dx);
-        },
-        onPanEnd: (_) {
-          if (_showMenu) {
-            _animationController.forward();
-            _showMenu = false;
-          } else {
-            _animationController.reverse();
-            _showMenu = true;
-          }
-        },
-        child: Scaffold(
-      backgroundColor: bgColor,
-      appBar: MyAppBar(toggle: toggle), 
-      body: Container(
-        child: Center (
-          child: allTtables.isEmpty ? CircularProgressIndicator(
-
-          ) : AnimatedSwitcher(switchInCurve: Curves.easeOut,
-            switchOutCurve: Curves.easeIn,
-            duration: Duration(milliseconds: 500),
-            child: SfDataGrid(
-              onSwipeStart: (e) {
-                print(e.toString());
-                return true;
-              },
-                columnWidthMode: ColumnWidthMode.fill,
-                rowHeight: 70.0,
-                headerRowHeight: 60.0,
-                source: new TtableDataSource(selectedTtable: allTtables[selectedTtable]),
-                // source: new TtableDataSource(selectedTtable: selectedTtable),
-                columns: <GridColumn>[
-                  GridColumn(columnName: 'Пара', label: Container(
-                      padding: EdgeInsets.all(5.0),
-                      alignment: Alignment.centerLeft,
-                      child: const Text(
-                        'Пара',
-                      )
-                  )),
-                  GridColumn(columnName: 'Предмет', label: Container(
-                      padding: EdgeInsets.all(5.0),
-                      alignment: Alignment.centerLeft,
-                      child: const Text(
-                        'Предмет',
-                      )
-                  )),
-                  GridColumn(columnName: 'Группа', label: Container(
-                      padding: EdgeInsets.all(5.0),
-                      alignment: Alignment.centerRight,
-                      child: const Text(
-                        'Группа',
-                      )
-                  )),
-                  GridColumn(columnName: 'Кабинет', label: Container(
-                      padding: EdgeInsets.all(5.0),
-                      alignment: Alignment.centerRight,
-                      child: const Text(
-                        'Кабинет',
-                      )
-                  )),
-                ]
+    return Scaffold(
+      drawer: NavDrawer(teacher: teacher),
+        // drawer: MenuPage(teacher: teacher) ,
+          backgroundColor: Theme.of(context).primaryColorDark,
+            appBar: MyAppBar(toggle: toggle, title: "Расписание",),
+            body: Container(
+              child: Center (
+                child: allTtables.isEmpty ? CircularProgressIndicator() : AnimatedSwitcher(
+                  switchInCurve: Curves.easeOut,
+                    switchOutCurve: Curves.easeIn,
+                    duration: Duration(milliseconds: 500),
+                    child: SfDataGrid(
+                    allowSwiping: false,
+                  
+                    columnWidthMode: ColumnWidthMode.fill,
+                    rowHeight: 70.0,
+                    headerRowHeight: 60.0,
+                    source: new TtableDataSource(selectedTtable: allTtables[selectedTtable]),
+                    // source: new TtableDataSource(selectedTtable: selectedTtable),
+                    columns: <GridColumn>[
+                      GridColumn(columnName: 'Пара', label: Container(
+                          padding: EdgeInsets.all(5.0),
+                          alignment: Alignment.centerLeft,
+                          child: const Text(
+                            'Пара',
+                          )
+                      )),
+                      GridColumn(columnName: 'Предмет', label: Container(
+                          padding: EdgeInsets.all(5.0),
+                          alignment: Alignment.centerLeft,
+                          child: const Text(
+                            'Предмет',
+                          )
+                      )),
+                      GridColumn(columnName: 'Группа', label: Container(
+                          padding: EdgeInsets.all(5.0),
+                          alignment: Alignment.centerRight,
+                          child: const Text(
+                            'Группа',
+                          )
+                      )),
+                      GridColumn(columnName: 'Кабинет', label: Container(
+                          padding: EdgeInsets.all(5.0),
+                          alignment: Alignment.centerRight,
+                          child: const Text(
+                            'Кабинет',
+                          )
+                      )),
+                    ]
+                  ),
+                )
+              ),
             ),
-          )
-        ),
-      ),
 
 
       bottomNavigationBar: FluidNavBar(
-
         icons: [
           FluidNavBarIcon(
               svgPath: "assets/icon/PN.svg",
-              backgroundColor: Colors.pink,
+              backgroundColor: Theme.of(context).primaryColorLight,
               extras: {"label": "PN"}
             ),
           FluidNavBarIcon(
               svgPath: "assets/icon/VT.svg",
-              backgroundColor: Colors.pink,
+              backgroundColor: Theme.of(context).primaryColorLight,
               extras: {"label": "vt"}
               ),
           FluidNavBarIcon(
               svgPath: "assets/icon/SR.svg",
-              backgroundColor: Colors.pink,
+              backgroundColor: Theme.of(context).primaryColorLight,
               extras: {"label": "sr"}
               ),
           FluidNavBarIcon(
               svgPath: "assets/icon/4T.svg",
-              backgroundColor: Colors.pink,
+              backgroundColor: Theme.of(context).primaryColorLight,
               extras: {"label": "4t"}
               ),
           FluidNavBarIcon(
               svgPath: "assets/icon/PT.svg",
-              backgroundColor: Colors.pink,
+              backgroundColor: Theme.of(context).primaryColorLight,
               extras: {"label": "pt"}
               ),
           FluidNavBarIcon(
               svgPath: "assets/icon/SB.svg",
-              backgroundColor: Colors.pink,
+              backgroundColor: Theme.of(context).primaryColorLight,
               extras: {"label": "sb"}
               ),
         ],
         onChange: _handleNavigationChange,
         style: FluidNavBarStyle(
-            barBackgroundColor: lightblue,
-            iconSelectedForegroundColor: Colors.white,
-            iconUnselectedForegroundColor: Colors.white60),
+            barBackgroundColor: Theme.of(context).primaryColor,
+            iconSelectedForegroundColor: Theme.of(context).textTheme.bodyMedium?.color,
+            iconUnselectedForegroundColor: Theme.of(context).textTheme.displaySmall?.color),
         scaleFactor: 1.5,
         defaultIndex: selectedTtable,
         itemBuilder: (icon, item) => Semantics(
@@ -282,10 +228,7 @@ _animationController = AnimationController(
           child: item
         ),
       ),
-    ),
-        ));
-    
-    
+    );
   }
 }
 
@@ -319,41 +262,5 @@ class TtableDataSource extends DataGridSource {
             child: Text(dataGridCell.value.toString()),
           );
         }).toList());
-  }
-}
-class MyAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final Function toggle;
-
-  MyAppBar({required this.toggle});
-
-  @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
-
-  @override
-  _MyAppBar createState() => _MyAppBar();
-}
-
-class _MyAppBar extends State<MyAppBar> {
-  
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(centerTitle: false, 
-    backgroundColor: lightblue,
-    title: Row(children: [
-      TextButton(
-          onPressed: () {
-            
-            widget.toggle();
-            
-          }, child: Icon(
-              Icons.menu,
-              color: Colors.white,
-              size: 25,
-            ),
-          ),
-      Text("Расписание"), 
-    ],)
-    );
   }
 }

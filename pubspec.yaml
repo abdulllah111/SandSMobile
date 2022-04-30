@@ -87,9 +87,10 @@ flutter:
     - assets/images/doge.jpg
 dependencies:
   {
+    adaptive_theme: ^2.3.1,
     path_provider: ^2.0.9,
     firebase_analytics: ^9.1.5,
-    firebase_core: ^1.14.1,
+    # firebase_core: ^1.14.1,
     firebase_crashlytics: ^2.6.2,
     firebase_messaging: ^11.2.13,
     cupertino_icons: ^1.0.2,

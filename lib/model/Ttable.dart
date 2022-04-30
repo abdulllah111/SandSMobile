@@ -4,7 +4,16 @@
 
 import 'dart:convert';
 
+import 'package:sands/model/disciplinegroupteacher.dart';
+import 'package:sands/model/lesson.dart';
+import 'package:sands/model/office.dart';
 import 'package:sands/model/teacher.dart';
+import 'package:sands/model/weekday.dart';
+
+import 'package:sands/model/discipline.dart';
+import 'package:sands/model/group.dart';
+
+
 
 List<TTable> tTableFromJson(String str) => List<TTable>.from(json.decode(str).map((x) => TTable.fromJson(x)));
 
@@ -55,151 +64,5 @@ class TTable {
     "lesson": lesson.toJson(),
     "office": office.toJson(),
     "discipline_group_teacher": disciplineGroupTeacher.toJson(),
-  };
-}
-
-class DisciplineGroupTeacher {
-  DisciplineGroupTeacher({
-    required this.iddisciplineGroupTeacher,
-    required this.idteacher,
-    required this.iddiscipline,
-    required this.idgroup,
-    required this.teacher,
-    required this.discipline,
-    required this.group,
-  });
-
-  int iddisciplineGroupTeacher;
-  int idteacher;
-  int iddiscipline;
-  int idgroup;
-  Teacher teacher;
-  Discipline discipline;
-  Group group;
-
-  factory DisciplineGroupTeacher.fromJson(Map<String, dynamic> json) => DisciplineGroupTeacher(
-    iddisciplineGroupTeacher: json["iddiscipline-group-teacher"],
-    idteacher: json["idteacher"],
-    iddiscipline: json["iddiscipline"],
-    idgroup: json["idgroup"],
-    teacher: Teacher.fromJson(json["teacher"]),
-    discipline: Discipline.fromJson(json["discipline"]),
-    group: Group.fromJson(json["group"]),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "iddiscipline-group-teacher": iddisciplineGroupTeacher,
-    "idteacher": idteacher,
-    "iddiscipline": iddiscipline,
-    "idgroup": idgroup,
-    "teacher": teacher.toJson(),
-    "discipline": discipline.toJson(),
-    "group": group.toJson(),
-  };
-}
-
-class Discipline {
-  Discipline({
-    required this.iddiscipline,
-    required this.disciplineName,
-  });
-
-  int iddiscipline;
-  String disciplineName;
-
-  factory Discipline.fromJson(Map<String, dynamic> json) => Discipline(
-    iddiscipline: json["iddiscipline"],
-    disciplineName: json["discipline_name"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "iddiscipline": iddiscipline,
-    "discipline_name": disciplineName,
-  };
-}
-
-class Group {
-  Group({
-    required this.idgroup,
-    required this.groupName,
-    required this.iddepartment,
-  });
-
-  int idgroup;
-  String groupName;
-  int iddepartment;
-
-  factory Group.fromJson(Map<String, dynamic> json) => Group(
-    idgroup: json["idgroup"],
-    groupName: json["group_name"],
-    iddepartment: json["iddepartment"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "idgroup": idgroup,
-    "group_name": groupName,
-    "iddepartment": iddepartment,
-  };
-}
-
-
-
-class Lesson {
-  Lesson({
-    required this.idlesson,
-    required this.lessonNumber,
-  });
-
-  int idlesson;
-  String lessonNumber;
-
-  factory Lesson.fromJson(Map<String, dynamic> json) => Lesson(
-    idlesson: json["idlesson"],
-    lessonNumber: json["lesson_number"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "idlesson": idlesson,
-    "lesson_number": lessonNumber,
-  };
-}
-
-class Office {
-  Office({
-    required this.idoffice,
-    required this.officeNumber,
-  });
-
-  int idoffice;
-  String officeNumber;
-
-  factory Office.fromJson(Map<String, dynamic> json) => Office(
-    idoffice: json["idoffice"],
-    officeNumber: json["office_number"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "idoffice": idoffice,
-    "office_number": officeNumber,
-  };
-}
-
-class Weekday {
-  Weekday({
-    required this.idweekday,
-    required this.weekdayName,
-  });
-
-  int idweekday;
-  String weekdayName;
-
-  factory Weekday.fromJson(Map<String, dynamic> json) => Weekday(
-    idweekday: json["idweekday"],
-    weekdayName: json["weekday_name"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "idweekday": idweekday,
-    "weekday_name": weekdayName,
   };
 }

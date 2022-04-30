@@ -1,9 +1,12 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sands/model/teacher.dart';
 
 import 'package:sands/pages/menu_page.dart';
-import 'package:sands/teacher/main_teacher.dart';
+import 'package:sands/teacher/ttableteacher.dart';
+
+import '../constants/theme.dart';
 
 
 class MainTeacher extends StatelessWidget {
@@ -11,20 +14,12 @@ class MainTeacher extends StatelessWidget {
   final Teacher? teacher;
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Weekly Flutter Challenge 6',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Scaffold(
-        body: Stack(
-          children: <Widget>[
-            MenuPage(teacher: teacher,),
-            TtableFromTeacher(teacher: teacher)
-          ],
-        ),
-      ),
-    );
+    return Scaffold(
+          body: Stack(
+            children: <Widget>[
+              TtableFromTeacher(teacher: teacher)
+            ],
+          ),
+        );
   }
 }

@@ -5,9 +5,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:sands/student/sudent_login.dart';
 import 'package:sands/model/teacher.dart';
-import 'package:sands/teacher/main_teacher.dart';
+import 'package:sands/student/sudent_login.dart';
+import 'package:sands/teacher/ttableteacher.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:sands/teacher/teacher_main.dart';
@@ -28,7 +28,7 @@ class TeacherLogin extends StatelessWidget {
           Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            color: blue,
+            color: Theme.of(context).primaryColor,
           ),
           const TopSginup(),
           Positioned(
@@ -37,21 +37,13 @@ class TeacherLogin extends StatelessWidget {
               height: MediaQuery.of(context).size.height * 0.9,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                  color: whiteshade,
+                  color:  Theme.of(context).primaryColorDark,
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(45),
                       topRight: Radius.circular(45))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    height: 250,
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    margin: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.09,
-                        bottom: 50),
-                    child: Image.asset("assets/images/login.png"),
-                  ),
                   InputField(),
                   const SizedBox(
                     height: 10,
@@ -62,12 +54,11 @@ class TeacherLogin extends StatelessWidget {
                     child: Center(child: Text.rich(
                       TextSpan(
                           text: "Авторизоваться как студент?",
-                          style: TextStyle(
-                              color: grayshade.withOpacity(0.8), fontSize: 16),
+                          style: Theme.of(context).textTheme.bodyLarge,
                           children: [
                             TextSpan(
                                 text: "\nАвторизоваться",
-                                style: TextStyle(color: blue, fontSize: 16),
+                                style: Theme.of(context).textTheme.bodyMedium,
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
                                     Navigator.pushReplacementNamed(
@@ -121,20 +112,20 @@ class _InputFieldState extends State<InputField> {
         //Логин
         Container(
           margin: const EdgeInsets.only(
+            top: 200,
             left: 20,
             right: 20,
             bottom: 10,
           ),
-          child: const Text(
+          child: Text(
             "Логин",
-            style: TextStyle(
-                color: Colors.black, fontSize: 22, fontWeight: FontWeight.w500),
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
         ),
         Container(
             margin: const EdgeInsets.only(left: 20, right: 20),
             decoration: BoxDecoration(
-              color: grayshade.withOpacity(0.5),
+              color: Theme.of(context).disabledColor,
               // border: Border.all(
               //   width: 1,
               // ),
@@ -143,7 +134,8 @@ class _InputFieldState extends State<InputField> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: TextField(
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
+                  
                   hintText: "Введите логин",
                   border: InputBorder.none,
                 ),
@@ -158,20 +150,20 @@ class _InputFieldState extends State<InputField> {
           //Пароль
           Container(
           margin: const EdgeInsets.only(
+            top: 20,
             left: 20,
             right: 20,
             bottom: 10,
           ),
-          child: const Text(
+          child: Text(
             "Пароль",
-            style: TextStyle(
-                color: Colors.black, fontSize: 22, fontWeight: FontWeight.w500),
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
         ),
         Container(
           margin: const EdgeInsets.only(left: 20, right: 20),
           decoration: BoxDecoration(
-            color: grayshade.withOpacity(0.5),
+            color: Theme.of(context).disabledColor,
             // border: Border.all(
             //   width: 1,
             // ),
@@ -210,8 +202,8 @@ class _InputFieldState extends State<InputField> {
             children: [
               Checkbox(
                   value: isCheck,
-                  checkColor: whiteshade, // color of tick Mark
-                  activeColor: blue,
+                  checkColor: Theme.of(context).primaryColorLight, // color of tick Mark
+                  activeColor: Theme.of(context).primaryColor,
                   onChanged: (val) {
                     setState(() {
                       isCheck = val!;
@@ -221,8 +213,7 @@ class _InputFieldState extends State<InputField> {
               Text.rich(
                 TextSpan(
                     text: "Запомнить меня?",
-                    style:
-                        TextStyle(color: grayshade.withOpacity(0.8), fontSize: 16),),
+                    style:Theme.of(context).textTheme.bodyLarge,),
               ),
             ],
           ),
@@ -252,10 +243,10 @@ class _InputFieldState extends State<InputField> {
               
             }
               
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MainTeacher(teacher: teacher)));
+            Navigator.pushReplacementNamed(
+                                        context,
+                                        '/mainteacher',
+                                        arguments: teacher);
             }
           },
           child: Container(
@@ -263,16 +254,13 @@ class _InputFieldState extends State<InputField> {
             height: MediaQuery.of(context).size.height * 0.07,
             margin: const EdgeInsets.only(left: 20, right: 20),
             decoration: BoxDecoration(
-                color: blue,
+                color: Theme.of(context).primaryColor,
                 borderRadius:
                     const BorderRadius.all(Radius.circular(10))),
             child: Center(
               child: Text(
                 "Войти",
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w500,
-                    color: whiteshade),
+                style: Theme.of(context).textTheme.displayLarge,
               ),
             ),
           ),
@@ -300,7 +288,7 @@ class TopSginup extends StatelessWidget {
           ),
           Text(
             "Преподаватель",
-            style: TextStyle(color: whiteshade, fontSize: 25),
+            style: Theme.of(context).textTheme.displayMedium,
           )
         ],
       ),

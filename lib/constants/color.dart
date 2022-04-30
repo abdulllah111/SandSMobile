@@ -1,13 +1,12 @@
 import 'package:flutter/cupertino.dart';
 
-const Color black = Color(0xFF191555);
-const Color white = Color(0xFF0037FF);
-const Color bgColor = Color(0xFFFFFFFF);
-const Color selectColor = Color(0xFFFFFFFF);
-Color lightsky = const Color(0xFFA6C0FF);
-Color whiteshade = const Color(0xFFF8F9FA);
-Color blue = const Color(0xFF1137FF);
-Color lightblueshade = const Color(0xFF758CC8);
-Color grayshade = const Color(0xFF9FA4AF);
-Color lightblue = const Color(0xFF4B68D1);
-Color blackshade = const Color(0xFF555555);
+
+const Color blue = Color.fromARGB(255, 57,77,128);
+const Color lightblue = Color.fromARGB(255, 71, 111, 192);
+const Color darkblue = Color.fromARGB(255, 35, 52, 95);
+const Color darkdarkblue = Color.fromARGB(255, 46, 61, 103);
+const Color white = Color.fromARGB(255, 213, 213, 213);
+const Color bluetext = Color.fromARGB(255, 104,122,172);
+const Color darkbluetext = Color.fromARGB(255, 90, 109, 150);
+const Color grayshade = Color.fromARGB(255, 159, 164, 175);
+

@@ -2,14 +2,16 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:fluid_bottom_nav_bar/fluid_bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:sands/constants/text_style.dart';
 
 import 'package:sands/model/Ttable.dart';
 import 'package:sands/model/group.dart' as gr;
-import 'package:sands/widgets/custom_paint.dart';
+// import 'package:sands/widgets/custom_paint.dart';
 import 'package:sands/constants/color.dart';
 import 'package:http/http.dart' as http;
+import 'package:sands/widgets/myappbar.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+
+
 
 class MainStudent extends StatefulWidget {
   const MainStudent({Key? key, required this.group}) : super(key: key);
@@ -27,7 +29,8 @@ class _MainStudentState extends State<MainStudent> {
   late List<TTable> tchetverg;
   late List<TTable> piatnica;
   late List<TTable> subbota;
-  List<TTable> selectedTtable = [];
+  late List<List<TTable>> allTtables = [];
+  late int selectedTtable;
 
   final gr.Group? group;
   _MainStudentState(this.group);
@@ -52,36 +55,43 @@ class _MainStudentState extends State<MainStudent> {
       tchetverg = tTableFromJson(responce4.body);
       piatnica = tTableFromJson(responce5.body);
       subbota = tTableFromJson(responce6.body);
-      selectedTtable = ponedelnik;
+      allTtables = [ponedelnik, vtornik, sreda, tchetverg, piatnica, subbota];
     });
   }
   void initState() {
-    super.initState();
+    allTtables = [];
     ponedelnik = [];
-    selectedTtable = [];
+    // selectedTtable = 0;
+    if(DateTime.now().weekday-1 == 6){
+      selectedTtable = 0;
+    }
+    else{
+      selectedTtable = DateTime.now().weekday-1;
+    }
     getGroupsData();
+    super.initState();
   }
 
   void _handleNavigationChange(int index) {
     setState(() {
       switch (index){
         case 0:
-          selectedTtable = ponedelnik;
+          selectedTtable = 0;
           break;
         case 1:
-          selectedTtable = vtornik;
+          selectedTtable = 1;
           break;
         case 2:
-          selectedTtable = sreda;
+          selectedTtable = 2;
           break;
         case 3:
-          selectedTtable = tchetverg;
+          selectedTtable = 3;
           break;
         case 4:
-          selectedTtable = piatnica;
+          selectedTtable = 4;
           break;
         case 5:
-          selectedTtable = subbota;
+          selectedTtable = 5;
           break;
       }
       // _child = AnimatedSwitcher(
@@ -92,31 +102,26 @@ class _MainStudentState extends State<MainStudent> {
       // );
     });
   }
-
+  void togle(){}
   // ttable/getforgroup/{id}/{weekday}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: bgColor,
-      appBar: AppBar(
-        title: Text("Расписание для группы ${group?.groupName}"),
-      ),
+      backgroundColor: Theme.of(context).primaryColorDark,
+      appBar: MyAppBar(title: "Расписание ${group?.groupName}", toggle: togle,),
       body: Container(
         child: Center (
-          child: selectedTtable.isEmpty ? CircularProgressIndicator(
+          child: allTtables.isEmpty ? CircularProgressIndicator(
 
           ) : AnimatedSwitcher(switchInCurve: Curves.easeOut,
             switchOutCurve: Curves.easeIn,
             duration: Duration(milliseconds: 500),
             child: SfDataGrid(
-              onSwipeStart: (e) {
-                print(e.toString());
-                return true;
-              },
+              
                 columnWidthMode: ColumnWidthMode.fill,
                 rowHeight: 70.0,
                 headerRowHeight: 60.0,
-                source:  new TtableDataSource(selectedTtable: selectedTtable),
+                source:  new TtableDataSource(selectedTtable: allTtables[selectedTtable]),
                 // source: new TtableDataSource(selectedTtable: selectedTtable),
                 columns: <GridColumn>[
                   GridColumn(columnName: 'Пара', label: Container(
@@ -153,55 +158,49 @@ class _MainStudentState extends State<MainStudent> {
         ),
       ),
 
-    //     ..onTap = () {
-    //   Navigator.pushReplacement(
-    //       context,
-    //       MaterialPageRoute(
-    //           builder: (context) => const TeacherLogin()));
-    //   print("Sign Up click");
-    // }
 
       bottomNavigationBar: FluidNavBar(
 
         icons: [
           FluidNavBarIcon(
               svgPath: "assets/icon/PN.svg",
-              backgroundColor: Colors.pink,
+              backgroundColor: Theme.of(context).primaryColorLight,
               extras: {"label": "PN"}
             ),
           FluidNavBarIcon(
               svgPath: "assets/icon/VT.svg",
-              backgroundColor: Colors.pink,
+              backgroundColor: Theme.of(context).primaryColorLight,
               extras: {"label": "vt"}
               ),
           FluidNavBarIcon(
               svgPath: "assets/icon/SR.svg",
-              backgroundColor: Colors.pink,
+              backgroundColor: Theme.of(context).primaryColorLight,
               extras: {"label": "sr"}
               ),
           FluidNavBarIcon(
               svgPath: "assets/icon/4T.svg",
-              backgroundColor: Colors.pink,
+              backgroundColor: Theme.of(context).primaryColorLight,
               extras: {"label": "4t"}
               ),
           FluidNavBarIcon(
               svgPath: "assets/icon/PT.svg",
-              backgroundColor: Colors.pink,
+              backgroundColor: Theme.of(context).primaryColorLight,
               extras: {"label": "pt"}
               ),
           FluidNavBarIcon(
               svgPath: "assets/icon/SB.svg",
-              backgroundColor: Colors.pink,
+              backgroundColor: Theme.of(context).primaryColorLight,
               extras: {"label": "sb"}
               ),
         ],
         onChange: _handleNavigationChange,
         style: FluidNavBarStyle(
-            barBackgroundColor: Colors.blue,
-            iconSelectedForegroundColor: Colors.white,
-            iconUnselectedForegroundColor: Colors.white60),
+            barBackgroundColor: Theme.of(context).primaryColor,
+            iconSelectedForegroundColor: Theme.of(context).textTheme.bodyMedium?.color,
+            iconUnselectedForegroundColor: Theme.of(context).textTheme.displaySmall?.color
+            ),
         scaleFactor: 1.5,
-        defaultIndex: 0,
+        defaultIndex: selectedTtable,
         itemBuilder: (icon, item) => Semantics(
           label: icon.extras!["label"],
           child: item
@@ -220,8 +219,7 @@ class TtableDataSource extends DataGridSource {
       DataGridCell<String>(
           columnName: 'Преподаватель', value: e.disciplineGroupTeacher.teacher.name),
       DataGridCell<String>(columnName: 'Кабинет', value: e.office.officeNumber),
-    ]))
-        .toList();
+    ])).toList();
   }
 
   List<DataGridRow>  _ttables = [];
@@ -234,9 +232,7 @@ class TtableDataSource extends DataGridSource {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((dataGridCell) {
           return Container(
-            alignment: (dataGridCell.columnName == 'Пара' || dataGridCell.columnName == 'Предмет')
-                ? Alignment.centerLeft
-                : Alignment.centerRight,
+            alignment: Alignment.center,
             padding: EdgeInsets.all(5.0),
             child: Text(dataGridCell.value.toString()),
           );
