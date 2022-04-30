@@ -12,7 +12,7 @@ import 'package:sands/pages/menu_page.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../widgets/myappbar.dart';
-import '../widgets/mydraver.dart';
+import '../widgets/myteacherdraver.dart';
 
 
 class SubTtableTeacher extends StatefulWidget {
@@ -55,9 +55,9 @@ class _MainTeacherState extends State<SubTtableTeacher> with SingleTickerProvide
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: NavDrawer(teacher: teacher,),
+      drawer: TeacherDraver(teacher: teacher,),
           backgroundColor: Theme.of(context).primaryColorDark,
-            appBar: MyAppBar(toggle: toggle, title: "Расписание",),
+            appBar: MyAppBar(toggle: toggle, title: "Замены",),
             body: Container(
               child: Center (
                 child: subTTables.isEmpty ? CircularProgressIndicator() : AnimatedSwitcher(
@@ -75,38 +75,46 @@ class _MainTeacherState extends State<SubTtableTeacher> with SingleTickerProvide
                     columns: <GridColumn>[
                       GridColumn(columnName: 'Дата', label: Container(
                           padding: EdgeInsets.all(5.0),
-                          alignment: Alignment.centerLeft,
+                          alignment: Alignment.center,
+                          child: Container(alignment: Alignment.center,
                           child: const Text(
                             'Дата',
-                          )
+                          ),
+                        )
                       )),
                       GridColumn(columnName: 'Пара', label: Container(
                           padding: EdgeInsets.all(5.0),
-                          alignment: Alignment.centerLeft,
+                          alignment: Alignment.center,
+                          child: Container(alignment: Alignment.center,
                           child: const Text(
                             'Пара',
-                          )
+                          ),
+                        )
                       )),
                       GridColumn(columnName: 'Предмет', label: Container(
                           padding: EdgeInsets.all(5.0),
-                          alignment: Alignment.centerLeft,
+                          alignment: Alignment.center,
+                          child: Container(alignment: Alignment.center,
                           child: const Text(
                             'Предмет',
-                          )
+                          ),
+                        )
                       )),
                       GridColumn(columnName: 'Группа', label: Container(
                           padding: EdgeInsets.all(5.0),
-                          alignment: Alignment.centerRight,
+                          alignment: Alignment.center,
                           child: const Text(
                             'Группа',
                           )
                       )),
-                      GridColumn(columnName: 'Кабинет', label: Container(
+                      GridColumn(columnName: 'Группа', label: Container(
                           padding: EdgeInsets.all(5.0),
-                          alignment: Alignment.centerRight,
+                          alignment: Alignment.center,
+                          child: Container(alignment: Alignment.center,
                           child: const Text(
-                            'Кабинет',
-                          )
+                            'Группа',
+                          ),
+                        )
                       )),
                     ]
                   ),
@@ -121,7 +129,7 @@ class SubTtableDataSource extends DataGridSource {
   SubTtableDataSource({required List<SubTTable> subTTables}) {
     _subttables = subTTables
         .map<DataGridRow>((e) => DataGridRow(cells: [
-      DataGridCell<String>(columnName: 'Дата', value: e.date.toString()),
+      DataGridCell<String>(columnName: 'Дата', value: '${e.date.day}.${e.date.month}.${e.date.year}'),
       DataGridCell<String>(columnName: 'Пара', value: e.lesson.lessonNumber),
       DataGridCell<String>(columnName: 'Предмет', value: e.disciplineGroupTeacher.discipline.disciplineName),
       DataGridCell<String>(
@@ -141,9 +149,7 @@ class SubTtableDataSource extends DataGridSource {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((dataGridCell) {
           return Container(
-            alignment: (dataGridCell.columnName == 'Пара' || dataGridCell.columnName == 'Предмет')
-                ? Alignment.centerLeft
-                : Alignment.centerRight,
+            alignment: Alignment.center,
             padding: EdgeInsets.all(5.0),
             child: Text(dataGridCell.value.toString()),
           );

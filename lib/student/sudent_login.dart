@@ -1,15 +1,11 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:sands/model/department.dart';
 import 'package:sands/model/group.dart';
-import 'package:sands/student/main_student.dart';
-import 'package:sands/teacher/teacher_login.dart';
 import 'package:http/http.dart' as http;
-import '../constants/color.dart';
-
+import 'package:hive/hive.dart';
 
 class StudentLogin extends StatelessWidget {
 
@@ -41,34 +37,7 @@ class StudentLogin extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  InputField(collback: (Group? value) { selgroup = value; },),
-                  InkWell(
-                    onTap: () {
-                      if(selgroup != null){
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MainStudent(group: selgroup)));
-                      }
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.07,
-                      margin:
-                          const EdgeInsets.only(left: 20, right: 20, top: 20),
-                      decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10))),
-                      child: Center(
-                        child: Text(
-                          "Войти",
-                          style: Theme.of(context).textTheme.displayLarge,
-                          
-                        ),
-                      ),
-                    ),
-                  ),
+                  InputField(),
                   Container(
                     margin: EdgeInsets.only(
                         top: MediaQuery.of(context).size.height * 0.03),
@@ -102,19 +71,15 @@ class StudentLogin extends StatelessWidget {
 
 class InputField extends StatefulWidget {
 
-  final ValueSetter<Group?> collback;
-
-   InputField({required this.collback});
   @override
   _InputFieldState createState() => _InputFieldState();
 
 }
 
-class _InputFieldState extends State<InputField>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+class _InputFieldState extends State<InputField> {
   late List departments;
   late List groups;
+  bool? isCheck;
   late Group? selectedGroup = new Group(idgroup: 0, groupName: "groupName", iddepartment: 1);
   late var selecteddep;
   var groupsIsEnabled = false;
@@ -140,17 +105,11 @@ class _InputFieldState extends State<InputField>
 
   @override
   void initState() {
-    super.initState();
-    _controller = AnimationController(vsync: this);
+    isCheck = false;
     getDepartmentsData();
     selecteddep = new Department(iddepartment: 0, departmentName: "Отделение");
     selectedGroup = new Group(idgroup: 0, groupName: "Группа", iddepartment: 0);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+    super.initState();
   }
 
   @override
@@ -272,7 +231,6 @@ class _InputFieldState extends State<InputField>
                     setState(() {
                       selectedGroup = value as Group?;
                     });
-                    widget.collback(this.selectedGroup);
                   },
                 ),
                 Flexible(
@@ -287,6 +245,61 @@ class _InputFieldState extends State<InputField>
                 )
               ],
             )),
+            Container(
+          margin: const EdgeInsets.only(left: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Checkbox(
+                  value: isCheck,
+                  checkColor: Theme.of(context).primaryColorLight, // color of tick Mark
+                  activeColor: Theme.of(context).primaryColor,
+                  onChanged: (val) {
+                    setState(() {
+                      isCheck = val!;
+                      print(isCheck);
+                    });
+                  }),
+              Text.rich(
+                TextSpan(
+                    text: "Запомнить меня?",
+                    style:Theme.of(context).textTheme.bodyLarge,),
+              ),
+            ],
+          ),
+        ),
+        InkWell(
+          onTap: () async {
+            if(selectedGroup != null){
+              Navigator.pushReplacementNamed(
+                  context, '/mainstudent', arguments: selectedGroup);
+            }
+            if(selectedGroup != null){
+            if(isCheck == true){
+              Hive.box<Group>('group').add(selectedGroup!);
+            }
+            Navigator.pushReplacementNamed(
+                  context, '/mainstudent', arguments: selectedGroup);
+            }
+          },
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.07,
+            margin:
+                const EdgeInsets.only(left: 20, right: 20, top: 20),
+            decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                borderRadius:
+                    const BorderRadius.all(Radius.circular(10))),
+            child: Center(
+              child: Text(
+                "Войти",
+                style: Theme.of(context).textTheme.displayLarge,
+                
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }

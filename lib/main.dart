@@ -3,8 +3,11 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:sands/model/group.dart';
 import 'package:sands/model/teacher.dart';
+import 'package:sands/student/student_main.dart';
 import 'package:sands/student/sudent_login.dart';
+import 'package:sands/student/ttablestudent.dart';
 import 'package:sands/teacher/subttableteacher.dart';
 import 'package:sands/teacher/ttableteacher.dart';
 import 'package:hive/hive.dart';
@@ -19,8 +22,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
   Hive.registerAdapter(TeacherAdapter());
+  Hive.registerAdapter(GroupAdapter());
   Hive.init(appDocumentDir.path);
   await Hive.openBox<Teacher>('teacher');
+  await Hive.openBox<Group>('group');
   await Firebase.initializeApp();
   
   runApp(const MyApp());
@@ -38,10 +43,11 @@ class MyApp extends StatelessWidget {
         builder: (DarkTheme, LightTheme) => MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: DarkTheme,
-          initialRoute: '/student',
+          home:  Hive.box<Teacher>('teacher').length != 0 ?  MainTeacher(teacher: Hive.box<Teacher>('teacher').get(0)) :
+          Hive.box<Group>('group').length != 0 ? MainStudent(group: Hive.box<Group>('group').get(0)) : StudentLogin(),
           routes: {
-            '/student':(context) => Hive.box<Teacher>('teacher').length == 0 ? StudentLogin() : MainTeacher(teacher: Hive.box<Teacher>('teacher').get(0)),
             '/teacher':(context) => TeacherLogin(),
+            '/student':(context) =>StudentLogin(),
         },
          onGenerateRoute: (settings) {
            if (settings.name == '/mainteacher') {
@@ -63,6 +69,20 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(
                 builder: (context) => SubTtableTeacher(
                       teacher: teacher,
+                    ));
+          }
+          if (settings.name == '/mainstudent') {
+            Group? group = settings.arguments as Group?;
+            return MaterialPageRoute(
+                builder: (context) => MainStudent(
+                      group: group,
+                    ));
+          }
+          if (settings.name == '/ttablestudent') {
+            Group? group = settings.arguments as Group?;
+            return MaterialPageRoute(
+                builder: (context) => TtableFromStudent(
+                      group: group,
                     ));
           }
         }

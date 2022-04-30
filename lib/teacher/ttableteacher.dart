@@ -1,4 +1,6 @@
 
+import 'dart:ui';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fluid_bottom_nav_bar/fluid_bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +13,7 @@ import 'package:sands/pages/menu_page.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../widgets/myappbar.dart';
-import '../widgets/mydraver.dart';
+import '../widgets/myteacherdraver.dart';
 
 
 class TtableFromTeacher extends StatefulWidget {
@@ -129,7 +131,7 @@ class _MainTeacherState extends State<TtableFromTeacher> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: NavDrawer(teacher: teacher),
+      drawer: TeacherDraver(teacher: teacher),
         // drawer: MenuPage(teacher: teacher) ,
           backgroundColor: Theme.of(context).primaryColorDark,
             appBar: MyAppBar(toggle: toggle, title: "Расписание",),
@@ -150,31 +152,37 @@ class _MainTeacherState extends State<TtableFromTeacher> with SingleTickerProvid
                     columns: <GridColumn>[
                       GridColumn(columnName: 'Пара', label: Container(
                           padding: EdgeInsets.all(5.0),
-                          alignment: Alignment.centerLeft,
+                          alignment: Alignment.center,
+                          child: Container(alignment: Alignment.center,
                           child: const Text(
                             'Пара',
-                          )
+                          ),
+                        )
                       )),
                       GridColumn(columnName: 'Предмет', label: Container(
                           padding: EdgeInsets.all(5.0),
-                          alignment: Alignment.centerLeft,
+                          alignment: Alignment.center,
+                          child: Container(alignment: Alignment.center,
                           child: const Text(
                             'Предмет',
-                          )
+                          ),
+                        )
                       )),
                       GridColumn(columnName: 'Группа', label: Container(
                           padding: EdgeInsets.all(5.0),
-                          alignment: Alignment.centerRight,
+                          alignment: Alignment.center,
                           child: const Text(
                             'Группа',
                           )
                       )),
-                      GridColumn(columnName: 'Кабинет', label: Container(
+                      GridColumn(columnName: 'Группа', label: Container(
                           padding: EdgeInsets.all(5.0),
-                          alignment: Alignment.centerRight,
+                          alignment: Alignment.center,
+                          child: Container(alignment: Alignment.center,
                           child: const Text(
-                            'Кабинет',
-                          )
+                            'Группа',
+                          ),
+                        )
                       )),
                     ]
                   ),
@@ -255,9 +263,7 @@ class TtableDataSource extends DataGridSource {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((dataGridCell) {
           return Container(
-            alignment: (dataGridCell.columnName == 'Пара' || dataGridCell.columnName == 'Предмет')
-                ? Alignment.centerLeft
-                : Alignment.centerRight,
+            alignment: Alignment.center,
             padding: EdgeInsets.all(5.0),
             child: Text(dataGridCell.value.toString()),
           );

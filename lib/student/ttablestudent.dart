@@ -9,19 +9,20 @@ import 'package:sands/model/group.dart' as gr;
 import 'package:sands/constants/color.dart';
 import 'package:http/http.dart' as http;
 import 'package:sands/widgets/myappbar.dart';
+import 'package:sands/widgets/mystudentdraver.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 
 
-class MainStudent extends StatefulWidget {
-  const MainStudent({Key? key, required this.group}) : super(key: key);
+class TtableFromStudent extends StatefulWidget {
+  const TtableFromStudent({Key? key, required this.group}) : super(key: key);
   final gr.Group? group;
   @override
-  _MainStudentState createState() => _MainStudentState(group);
+  _TtableFromStudentState createState() => _TtableFromStudentState(group);
 }
 
 
-class _MainStudentState extends State<MainStudent> {
+class _TtableFromStudentState extends State<TtableFromStudent> {
   int selectBtn = 0;
   late List<TTable> ponedelnik;
   late List<TTable> vtornik;
@@ -33,7 +34,7 @@ class _MainStudentState extends State<MainStudent> {
   late int selectedTtable;
 
   final gr.Group? group;
-  _MainStudentState(this.group);
+  _TtableFromStudentState(this.group);
 
   Future getGroupsData() async {
     var responce1 = await http.get(Uri.https('abdul-arabp.site',
@@ -107,6 +108,7 @@ class _MainStudentState extends State<MainStudent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: StudentDraver(group: group),
       backgroundColor: Theme.of(context).primaryColorDark,
       appBar: MyAppBar(title: "Расписание ${group?.groupName}", toggle: togle,),
       body: Container(
